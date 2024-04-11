@@ -86,4 +86,5 @@ def evolutionary_algorithm(population_size, num_cities):
 
 if __name__ == '__main__':
     #    print(evolutionary_algorithm(10, 15))
-    print(fitness(gen_random_journey(4), gen_distances()))
+    sjourney = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O']
+    print(fitness(sjourney, gen_distances()))
