@@ -1,55 +1,42 @@
 import numpy as np
 
-
 def gen_distances():
     distances = [[0, 5, 14, 30],
                  [5, 0, 10, 9],
                  [14, 10, 0, 20],
                  [30, 9, 20, 0], ]
-
-    # distances = [[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    #               [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    #               [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    #               [1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    #               [1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    #               [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    #               [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-    #               [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-    #               [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-    #               [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
-    #               [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
-    #               [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1],
-    #               [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
-    #               [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
-    #               [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],]
-
-    # for i in range(16):
-    #     for j in range(16):
-
     return distances
 
-
-def gen_random_journey(len):
-    cities = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-              'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-
-    selected_cities = cities[:len]
+def gen_random_journey(num_cities):
+    cities = ['A', 'B', 'C', 'D']
+    selected_cities = cities[:num_cities]
     random_journey = np.array(selected_cities)
     np.random.shuffle(random_journey)
-
     return random_journey
 
-
-# def fitness(journey, distances):
-
-
+def fitness(journey, distances, cities):
+    total_distance = 0
+    num_cities = len(journey)
+    
+    for i in range(num_cities - 1):
+        city1 = journey[i]
+        city2 = journey[i + 1]
+        total_distance += distances[cities.index(city1)][cities.index(city2)]
+    
+    # Agregar la distancia desde la ultima ciudad de regreso a la primera
+    city1 = journey[-1]
+    city2 = journey[0]
+    total_distance += distances[cities.index(city1)][cities.index(city2)]
+    
+    return total_distance
 
 def evolutionary_algorithm(population_size, num_cities):
     distances = gen_distances()
+    cities = ['A', 'B', 'C', 'D']
     population = np.array([gen_random_journey(num_cities) for _ in range(population_size)])
-    # a = gen_random_journey(4)
+    for journey in population:
+        print("Journey:", journey, "Fitness:", fitness(journey, distances, cities),"Km")
     return population
 
-
 if __name__ == '__main__':
-    print(evolutionary_algorithm(10, 15))
+    evolutionary_algorithm(10, 4)
