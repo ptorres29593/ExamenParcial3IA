@@ -93,15 +93,34 @@ def fitness(journey, distances):
     return distance
 
 
+import numpy as np  # Importa la librería NumPy bajo el alias np
+
 def crossover(parent1, parent2):
-    # Elije un punto de corte aleatorio
-    crossover_point = np.random.randint(1, len(parent1))
+    # Crear un mapeo para rastrear qué letras han sido seleccionadas en cada hijo
+    child1_mapping = {}  # Inicializa un diccionario para el hijo 1
+    child2_mapping = {}  # Inicializa un diccionario para el hijo 2
 
-    # Genera los hijos intercambiando las secciones antes y después del punto de corte
-    child1 = np.concatenate((parent1[:crossover_point], parent2[crossover_point:]))
-    child2 = np.concatenate((parent2[:crossover_point], parent1[crossover_point:]))
+    child1 = []  # Inicializa una lista para el hijo 1
+    child2 = []  # Inicializa una lista para el hijo 2
 
-    return child1, child2
+    for gene1, gene2 in zip(parent1, parent2):  # Itera sobre los genes de los padres
+        # Agregar genes de los padres al hijo sin repetición de letras
+        if gene1 not in child1_mapping:  # Verifica si el gen no está en el mapeo del hijo 1
+            child1.append(gene1)  # Agrega el gen al hijo 1
+            child1_mapping[gene1] = True  # Agrega el gen al mapeo del hijo 1
+        if gene2 not in child2_mapping:  # Verifica si el gen no está en el mapeo del hijo 2
+            child2.append(gene2)  # Agrega el gen al hijo 2
+            child2_mapping[gene2] = True  # Agrega el gen al mapeo del hijo 2
+
+    # Completar los hijos con las letras faltantes de los padres en el orden en que aparecen
+    for gene1, gene2 in zip(parent1, parent2):  # Itera sobre los genes de los padres nuevamente
+        if gene1 not in child1:  # Verifica si el gen no está en el hijo 1
+            child1.append(gene1)  # Agrega el gen al hijo 1
+        if gene2 not in child2:  # Verifica si el gen no está en el hijo 2
+            child2.append(gene2)  # Agrega el gen al hijo 2
+
+    return np.array(child1), np.array(child2)  # Devuelve los hijos como arrays de NumPy
+
 
 
 #def evolutionary_algorithm(population_size, num_cities):
