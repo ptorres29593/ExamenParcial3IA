@@ -92,9 +92,6 @@ def fitness(journey, distances):
 
     return distance
 
-
-import numpy as np  # Importa la librería NumPy bajo el alias np
-
 def crossover(parent1, parent2):
     # Crear un mapeo para rastrear qué letras han sido seleccionadas en cada hijo
     child1_mapping = {}  # Inicializa un diccionario para el hijo 1
