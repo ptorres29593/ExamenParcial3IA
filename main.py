@@ -1,5 +1,5 @@
 import numpy as np
-from random import randint
+from random import randint, random
 
 
 def gen_distances():
@@ -51,7 +51,7 @@ def gen_random_journey(length):
     selected_cities = cities[1:length]
     random_journey = np.array(selected_cities)
     np.random.shuffle(random_journey)
-    random_journey = np.insert(random_journey, 0,'A')
+    random_journey = np.insert(random_journey, 0, 'A')
 
     return random_journey
 
@@ -79,14 +79,83 @@ def fitness(journey, distances):
     return distance
 
 
-def evolutionary_algorithm(population_size, num_cities):
+def crossover(first, second):
+    crossover_point = randint(2, len(first) - 2)
+
+    child1 = second.copy()
+    child2 = first.copy()
+
+    for i in range(crossover_point):
+        for j, step in enumerate(child1):
+            if step == first[i]:
+                aux = child1[i]
+                child1[i] = first[i]
+                child1[j] = aux
+                break
+
+    for i in range(crossover_point):
+        for j, step in enumerate(child2):
+            if step == second[i]:
+                aux = child2[i]
+                child2[i] = second[i]
+                child2[j] = aux
+                break
+
+    return child1, child2
+
+
+def roulette_wheel_selection(population, fitness_values):
+    total_fitness = sum(fitness_values)
+    selection_probabilities = [fitness / total_fitness for fitness in fitness_values]
+    cumulative_probabilities = [sum(selection_probabilities[:i + 1]) for i in range(len(selection_probabilities))]
+    selected_parents = []
+    for _ in range(2):
+        random_value = randint(0, 1)
+        for i, cumulative_probability in enumerate(cumulative_probabilities):
+            if random_value <= cumulative_probability:
+                selected_parents.append(population[i])
+                break
+    return selected_parents
+
+
+def evolutionary_algorithm(population_size, num_cities, max_generations):
     distances = gen_distances()
     population = np.array([gen_random_journey(num_cities) for _ in range(population_size)])
+    generation_number = 1
+    new_population = []
+
+    for gen in range(max_generations):
+        fitness_values = [fitness(journey, distances) for journey in population]
+        new_population = []
+        index = fitness_values.index(min(fitness_values))
+        new_population.append(population[index])
+        while len(new_population) < round(population_size / 2):
+            selected_parents = roulette_wheel_selection(population, fitness_values)
+            new_population.append(selected_parents[0])
+            new_population.append(selected_parents[1])
+            child1, child2 = crossover(selected_parents[0], selected_parents[1])
+            new_population.append(child1)
+            new_population.append(child2)
+        while len(new_population) < population_size:
+            new_population.append(gen_random_journey(num_cities))
+
+        new_population = np.array(new_population)
+        population = new_population
+        generation_number += 1
+
+    index = fitness_values.index(min(fitness_values))
+    print(f"The best fitness {min(fitness_values)}")
+    print(f"The best individual {population[index]}")
+    print(f"Number of generations: {generation_number}")
+
+
     # a = gen_random_journey(4)
     return population
 
 
+def main():
+    print(evolutionary_algorithm(10, 10, 100))
+
+
 if __name__ == '__main__':
-    print(evolutionary_algorithm(10, 15))
-    # sjourney = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O']
-    # print(fitness(sjourney, gen_distances()))
+    main()
