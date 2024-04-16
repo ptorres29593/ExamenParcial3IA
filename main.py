@@ -42,13 +42,29 @@ def gen_distances():
 
     return distances
 
+#Original Pablo
+#def gen_random_journey(length):
+    #cities = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+              #'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+
+    #selected_cities = cities[:length]
+    #random_journey = np.array(selected_cities)
+    #np.random.shuffle(random_journey)
+
+    #return random_journey
 
 def gen_random_journey(length):
-    cities = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+    # Define la lista de ciudades excluyendo 'A'
+    cities = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
               'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
-    selected_cities = cities[:length]
+    # Agrega 'A' como la primera ciudad en la lista de ciudades seleccionadas
+    selected_cities = ['A'] + cities[:length - 1]
+
+    # Convierte la lista de ciudades seleccionadas en un array de NumPy
     random_journey = np.array(selected_cities)
+
+    # Mezcla aleatoriamente el orden de las ciudades en el recorrido
     np.random.shuffle(random_journey)
 
     return random_journey
@@ -77,10 +93,48 @@ def fitness(journey, distances):
     return distance
 
 
-def evolutionary_algorithm(population_size, num_cities):
-    distances = gen_distances()
-    population = np.array([gen_random_journey(num_cities) for _ in range(population_size)])
+def crossover(parent1, parent2):
+    # Elije un punto de corte aleatorio
+    crossover_point = np.random.randint(1, len(parent1))
+
+    # Genera los hijos intercambiando las secciones antes y después del punto de corte
+    child1 = np.concatenate((parent1[:crossover_point], parent2[crossover_point:]))
+    child2 = np.concatenate((parent2[:crossover_point], parent1[crossover_point:]))
+
+    return child1, child2
+
+
+#def evolutionary_algorithm(population_size, num_cities):
+    #distances = gen_distances()
+    #population = np.array([gen_random_journey(num_cities) for _ in range(population_size)])
     # a = gen_random_journey(4)
+    #return population
+
+def evolutionary_algorithm(population_size, num_cities):
+    # Generar las distancias entre las ciudades
+    distances = gen_distances()
+
+    # Inicializar la población aleatoria
+    population = np.array([gen_random_journey(num_cities) for _ in range(population_size)])
+
+    # Iterar sobre las generaciones del algoritmo evolutivo
+    for generation in range(num_generations):
+        new_population = []  # Lista para almacenar la nueva población
+
+        # Generar nuevos individuos para la próxima generación
+        for _ in range(population_size // 2):
+            # Seleccionar dos padres de la población actual
+            parent1, parent2 = select_parents(population)
+
+            # Aplicar el crossover para generar dos hijos
+            child1, child2 = crossover(parent1, parent2)
+
+            # Agregar los hijos a la nueva población
+            new_population.extend([child1, child2])
+
+        # Actualizar la población con la nueva generación
+        population = np.array(new_population)
+
     return population
 
 
