@@ -103,6 +103,16 @@ def crossover(first, second):
 
     return child1, child2
 
+def mutate(offspring, mutation_rate):
+    if random() < mutation_rate:
+        index_a = randint(1, len(offspring) - 1)
+        index_b = randint(1, len(offspring) - 1)
+        while index_b == index_a:
+            index_b = randint(1, len(offspring) - 1)
+        aux = offspring[index_b]
+        offspring[index_b] = offspring[index_a]
+        offspring[index_a] = aux
+    return offspring
 
 def roulette_wheel_selection(population, fitness_values):
     total_fitness = sum(fitness_values)
@@ -134,6 +144,8 @@ def evolutionary_algorithm(population_size, num_cities, max_generations):
             new_population.append(selected_parents[0])
             new_population.append(selected_parents[1])
             child1, child2 = crossover(selected_parents[0], selected_parents[1])
+            child1 = mutate(child1, mutation_rate=0.5)
+            child2 = mutate(child2, mutation_rate=0.5)
             new_population.append(child1)
             new_population.append(child2)
         while len(new_population) < population_size:
