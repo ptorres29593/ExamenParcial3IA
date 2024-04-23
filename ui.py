@@ -8,7 +8,7 @@ pygame.init()
 
 # Definir el tamaño de la pantalla
 screen_width = 1000
-screen_height = 800
+screen_height = 650
 screen = pygame.display.set_mode((screen_width, screen_height))
 
 # Definir el color de los puntos, del texto y de las líneas
@@ -58,6 +58,10 @@ while running and iterations < 10:
         # Dibujar el fitness
         fitness_text = font.render("Fitness: " + str(fitness), True, color)
         screen.blit(fitness_text, (10, 30))
+
+        # Dibujar Journey
+        fitness_text = font.render("Journey: " + str(order), True, color)
+        screen.blit(fitness_text, (10, 600))
 
     # Actualizar la pantalla
     pygame.display.flip()

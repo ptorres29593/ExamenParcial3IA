@@ -72,7 +72,7 @@ def fitness(journey, distances):
     for i, index in enumerate(indexes):
 
         if i == len(indexes) - 1:
-            distance += distances[i][indexes[0]]
+            distance += distances[index][indexes[0]]
         else:
             distance += distances[index][indexes[i + 1]]
 
@@ -128,6 +128,22 @@ def roulette_wheel_selection(population, fitness_values):
                 selected_parents.append(population[i])
                 break
     return selected_parents
+
+#def roulette_wheel_selection(population, fitness_values):
+#    # Invertir los valores de fitness para que los individuos con menor fitness tengan mayor probabilidad
+#    fitness_values = np.array(fitness_values)
+#    fitness_values = 1 / fitness_values
+#
+#    # Normalizar los valores de fitness para que sumen 1
+#    fitness_values = fitness_values / np.sum(fitness_values)
+#
+#    # Seleccionar dos índices de la población
+#    indices = np.random.choice(len(population), size=2, replace=False, p=fitness_values)
+#
+#    # Usar los índices para seleccionar los individuos de la población
+#    selected = [population[i] for i in indices]
+
+#    return selected
 
 
 def evolutionary_algorithm(population_size, num_cities, max_generations, inicial_population):
